@@ -13,9 +13,10 @@
 #include <script/interpreter.h>
 #include <util/check.h>
 #include <util/moneystr.h>
-
+// 특정 blockheight와 blocktime에 tx가 포함될 수 있는지.
 bool IsFinalTx(const CTransaction &tx, int nBlockHeight, int64_t nBlockTime)
 {
+    // nLocktime이 0이면 제한이 없다.
     if (tx.nLockTime == 0)
         return true;
     if ((int64_t)tx.nLockTime < ((int64_t)tx.nLockTime < LOCKTIME_THRESHOLD ? (int64_t)nBlockHeight : nBlockTime))
@@ -35,7 +36,7 @@ bool IsFinalTx(const CTransaction &tx, int nBlockHeight, int64_t nBlockTime)
     }
     return true;
 }
-
+// 이 함수는 언제 tx가 block에 포함될 수 있는지를 반환한다?
 std::pair<int, int64_t> CalculateSequenceLocks(const CTransaction &tx, int flags, std::vector<int>& prevHeights, const CBlockIndex& block)
 {
     assert(prevHeights.size() == tx.vin.size());
@@ -62,6 +63,7 @@ std::pair<int, int64_t> CalculateSequenceLocks(const CTransaction &tx, int flags
         // Sequence numbers with the most significant bit set are not
         // treated as relative lock-times, nor are they given any
         // consensus-enforced meaning at this point.
+        // disable flag가 1이면 sequence number가 의미없고 따라서 모든 block에 포함될 수 있다.
         if (txin.nSequence & CTxIn::SEQUENCE_LOCKTIME_DISABLE_FLAG) {
             // The height of this input is not relevant for sequence locks
             prevHeights[txinIndex] = 0;
@@ -69,7 +71,7 @@ std::pair<int, int64_t> CalculateSequenceLocks(const CTransaction &tx, int flags
         }
 
         int nCoinHeight = prevHeights[txinIndex];
-
+        // 이게 1이면 timespan을 기준으로 하고
         if (txin.nSequence & CTxIn::SEQUENCE_LOCKTIME_TYPE_FLAG) {
             const int64_t nCoinTime{Assert(block.GetAncestor(std::max(nCoinHeight - 1, 0)))->GetMedianTimePast()};
             // NOTE: Subtract 1 to maintain nLockTime semantics
@@ -87,6 +89,7 @@ std::pair<int, int64_t> CalculateSequenceLocks(const CTransaction &tx, int flags
             // block prior.
             nMinTime = std::max(nMinTime, nCoinTime + (int64_t)((txin.nSequence & CTxIn::SEQUENCE_LOCKTIME_MASK) << CTxIn::SEQUENCE_LOCKTIME_GRANULARITY) - 1);
         } else {
+            // 아니면 block 단위로 한다.
             nMinHeight = std::max(nMinHeight, nCoinHeight + (int)(txin.nSequence & CTxIn::SEQUENCE_LOCKTIME_MASK) - 1);
         }
     }
@@ -160,10 +163,13 @@ int64_t GetTransactionSigOpCost(const CTransaction& tx, const CCoinsViewCache& i
     }
     return nSigOps;
 }
-
+// 해당 tx들의 input이 유효한지 확인한다/
+// CCoinsViewCache는 leveldb의 snapshot?
+// transaction fee를 여기서 설정한다.
 bool Consensus::CheckTxInputs(const CTransaction& tx, TxValidationState& state, const CCoinsViewCache& inputs, int nSpendHeight, CAmount& txfee)
 {
     // are the actual inputs available?
+    // 해당 tx들의 input들이 존재하는가?
     if (!inputs.HaveInputs(tx)) {
         return state.Invalid(TxValidationResult::TX_MISSING_INPUTS, "bad-txns-inputs-missingorspent",
                          strprintf("%s: inputs missing/spent", __func__));
@@ -176,6 +182,7 @@ bool Consensus::CheckTxInputs(const CTransaction& tx, TxValidationState& state, 
         assert(!coin.IsSpent());
 
         // If prev is coinbase, check that it's matured
+        // 채굴 보상으로 얻는 utxo는 쓰기 위해 특정 시간까지 기다려야 한다.
         if (coin.IsCoinBase() && nSpendHeight - coin.nHeight < COINBASE_MATURITY) {
             return state.Invalid(TxValidationResult::TX_PREMATURE_SPEND, "bad-txns-premature-spend-of-coinbase",
                 strprintf("tried to spend coinbase at depth %d", nSpendHeight - coin.nHeight));

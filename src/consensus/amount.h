@@ -12,6 +12,7 @@
 typedef int64_t CAmount;
 
 /** The amount of satoshis in one BTC. */
+// 1btc가 얼마인지 표현한다/
 static constexpr CAmount COIN = 100000000;
 
 /** No amount larger than this (in satoshi) is valid.

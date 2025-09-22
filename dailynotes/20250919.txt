@@ -1,0 +1,11 @@
+sendrawtransaction: 서명된 tx를 다른 node로 전파한다.
+BroadcastTransaction을 통해 tx를 다른 node로 전파한다.
+
+AcceptToMemoryPool: mempool에 tx를 추가할 것인지 아닌지 판단한다
+CScript scriptPubKey -> locking script라고 생각하면 
+scriptsig가 unlocking한다. 즉, 해당 utxo에 대한 소유권을 나타낼 수 있다.
+mempool에 들어갈 떄, 
+
+vin의 scriptWitness는 언제 생성이 될까?
+
+Consensus::CheckTxInputs 이 모든 tx의 input이 유효한지 검증한다 -> 즉, utxo를 다 본다는 뜻인데,

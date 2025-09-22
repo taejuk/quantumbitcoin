@@ -250,6 +250,7 @@ public:
     {
         CScript scriptPubKey = script;
         if (wm == WitnessMode::PKH) {
+            // p2pkh인 경우
             uint160 hash;
             CHash160().Write(std::span{script}.subspan(1)).Finalize(hash);
             script = CScript() << OP_DUP << OP_HASH160 << ToByteVector(hash) << OP_EQUALVERIFY << OP_CHECKSIG;

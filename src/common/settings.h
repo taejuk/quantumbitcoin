@@ -25,6 +25,7 @@ namespace common {
 //!       isNull() methods can be substituted if there's a need to move away
 //!       from UniValue. (An implementation with boost::variant was posted at
 //!       https://github.com/bitcoin/bitcoin/pull/15934/files#r337691812)
+// univalue: json 파일 
 using SettingsValue = UniValue;
 
 //! Stored settings. This struct combines settings from the command line, a
@@ -63,6 +64,7 @@ bool WriteSettings(const fs::path& path,
 //!                               files.
 //! @param get_chain_type - enable special backwards compatible behavior
 //!                         for GetChainType
+
 SettingsValue GetSetting(const Settings& settings,
     const std::string& section,
     const std::string& name,
@@ -103,6 +105,7 @@ struct SettingsSpan {
 };
 
 //! Map lookup helper.
+// decltype: type을 추론한다.
 template <typename Map, typename Key>
 auto FindKey(Map&& map, Key&& key) -> decltype(&map.at(key))
 {

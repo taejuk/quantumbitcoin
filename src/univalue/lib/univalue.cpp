@@ -129,6 +129,7 @@ void UniValue::pushKV(std::string key, UniValue val)
 
     size_t idx;
     if (findKey(key, idx))
+        // 소유권을 이동한다?
         values[idx] = std::move(val);
     else
         pushKVEnd(std::move(key), std::move(val));

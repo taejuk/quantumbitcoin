@@ -588,6 +588,7 @@ RPCHelpMan listunspent()
 
     // Make sure the results are valid at least up to the most recent block
     // the user could have gotten from another RPC command prior to now
+    // chain 동기화
     pwallet->BlockUntilSyncedToCurrentChain();
 
     UniValue results(UniValue::VARR);
@@ -600,6 +601,7 @@ RPCHelpMan listunspent()
         cctl.m_include_unsafe_inputs = include_unsafe;
         filter_coins.check_version_trucness = false;
         LOCK(pwallet->cs_wallet);
+        // 여기서 가능한 tx를 다 꺼내오는가?
         vecOutputs = AvailableCoins(*pwallet, &cctl, /*feerate=*/std::nullopt, filter_coins).All();
     }
 

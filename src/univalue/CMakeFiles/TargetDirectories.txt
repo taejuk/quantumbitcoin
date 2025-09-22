@@ -1,0 +1,3 @@
+/Users/kimtaeju/Desktop/blockchain/opensource/quantumbitcoin/src/univalue/CMakeFiles/univalue.dir
+/Users/kimtaeju/Desktop/blockchain/opensource/quantumbitcoin/src/univalue/CMakeFiles/edit_cache.dir
+/Users/kimtaeju/Desktop/blockchain/opensource/quantumbitcoin/src/univalue/CMakeFiles/rebuild_cache.dir

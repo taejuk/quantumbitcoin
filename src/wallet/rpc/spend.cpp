@@ -318,6 +318,7 @@ RPCHelpMan sendtoaddress()
 
     UniValue address_amounts(UniValue::VOBJ);
     const std::string address = request.params[0].get_str();
+    // 실제 전송할 금액을 넣고
     address_amounts.pushKV(address, request.params[1]);
 
     std::set<int> sffo_set;

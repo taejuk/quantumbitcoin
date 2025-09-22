@@ -785,6 +785,8 @@ static RPCHelpMan signrawtransactionwithkey()
 
     FlatSigningProvider keystore;
     const UniValue& keys = request.params[1].get_array();
+    // key가 일단은 하나라고 생각하고
+    // 아마 여러개는 multisig와 연관되어 있나?
     for (unsigned int idx = 0; idx < keys.size(); ++idx) {
         UniValue k = keys[idx];
         CKey key = DecodeSecret(k.get_str());

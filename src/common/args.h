@@ -72,6 +72,7 @@ enum class OptionsCategory {
 struct KeyInfo {
     std::string name;
     std::string section;
+    // {}은 초기화하는 문법이다,
     bool negated{false};
 };
 
@@ -101,6 +102,7 @@ public:
     /**
      * Flags controlling how config and command line arguments are validated and
      * interpreted.
+     * command line과 argument에 대한 검증
      */
     enum Flags : uint32_t {
         ALLOW_ANY = 0x01,         //!< disable validation
@@ -130,7 +132,7 @@ protected:
         std::string m_help_text;
         unsigned int m_flags;
     };
-
+    // guarded_by(cs_args): cs_args라는 lock을 잡아야지 해당 값을 변경할 수 있다.
     mutable RecursiveMutex cs_args;
     common::Settings m_settings GUARDED_BY(cs_args);
     std::vector<std::string> m_command GUARDED_BY(cs_args);

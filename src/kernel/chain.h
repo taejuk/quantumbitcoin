@@ -23,7 +23,7 @@ interfaces::BlockInfo MakeBlockInfo(const CBlockIndex* block_index, const CBlock
 //! Other parts of the system sometimes need to vary in behavior depending on the
 //! existence of a background validation chainstate, e.g. when building indexes.
 enum class ChainstateRole {
-    // Single chainstate in use, "normal" IBD mode.
+    // Single chainstate in use, "normal" IBD mode. IBD mode
     NORMAL,
 
     // Doing IBD-style validation in the background. Implies use of an assumed-valid

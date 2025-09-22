@@ -16,6 +16,7 @@
 #endif
 
 // https://stackoverflow.com/questions/1413445/reading-a-password-from-stdcin
+// enable이 false이면 입력할 때, 보이지 않는다 -> 비밀번호입력할 때 사용한다.
 void SetStdinEcho(bool enable)
 {
 #ifdef WIN32
@@ -39,7 +40,7 @@ void SetStdinEcho(bool enable)
     (void)tcsetattr(STDIN_FILENO, TCSANOW, &tty);
 #endif
 }
-
+// 표준 입력이 터미널인지 확인하는 함수
 bool StdinTerminal()
 {
 #ifdef WIN32

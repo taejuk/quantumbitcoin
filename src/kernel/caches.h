@@ -21,7 +21,7 @@ struct CacheSizes {
     size_t block_tree_db;
     size_t coins_db;
     size_t coins;
-
+    // cache 사이즈가 미리 정해져 있는 듯.
     CacheSizes(size_t total_cache)
     {
         block_tree_db = std::min(total_cache / 8, MAX_BLOCK_DB_CACHE);

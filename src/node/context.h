@@ -53,6 +53,7 @@ class Warnings;
 //! and make code more modular and testable. The struct isn't intended to have
 //! any member functions. It should just be a collection of references that can
 //! be used without pulling in unwanted dependencies or functionality.
+// node에 대한 변수들을 관리한다.
 struct NodeContext {
     //! libbitcoin_kernel context
     std::unique_ptr<kernel::Context> kernel;

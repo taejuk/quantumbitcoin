@@ -18,15 +18,19 @@
  * in the block is a special one that creates a new coin owned by the creator
  * of the block.
  */
+// block header니깐 transaction이 보일 필요가 없다
 class CBlockHeader
 {
 public:
     // header
     int32_t nVersion;
     uint256 hashPrevBlock;
+    // transaction에 대한 merkle root일거고
     uint256 hashMerkleRoot;
+    // block 생성 시간인 듯
     uint32_t nTime;
     uint32_t nBits;
+    // node 생성자가 찾아야 하는 nNonce
     uint32_t nNonce;
 
     CBlockHeader()
@@ -69,6 +73,7 @@ class CBlock : public CBlockHeader
 {
 public:
     // network and disk
+    // transaction들이 실제로 담겨져 있다.
     std::vector<CTransactionRef> vtx;
 
     // Memory-only flags for caching expensive checks
@@ -106,6 +111,7 @@ public:
         CBlockHeader block;
         block.nVersion       = nVersion;
         block.hashPrevBlock  = hashPrevBlock;
+        // vtx를 통해 만들어 져야하는 것 아닌가? 아마 미리 만드는 듯
         block.hashMerkleRoot = hashMerkleRoot;
         block.nTime          = nTime;
         block.nBits          = nBits;

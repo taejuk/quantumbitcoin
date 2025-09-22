@@ -34,6 +34,7 @@ public:
     static constexpr uint32_t NULL_INDEX = std::numeric_limits<uint32_t>::max();
 
     COutPoint(): n(NULL_INDEX) { }
+    // outpoint는 txid와 해당 tx에서 몇 번째 out인지로 구성된다.
     COutPoint(const Txid& hashIn, uint32_t nIn): hash(hashIn), n(nIn) { }
 
     SERIALIZE_METHODS(COutPoint, obj) { READWRITE(obj.hash, obj.n); }
@@ -65,8 +66,10 @@ public:
  */
 class CTxIn
 {
-public:
+public: 
+    // 어느 utxo를 쓸 것인지.
     COutPoint prevout;
+    // 이 utxo에 대한 lock을 풀 수 있는 lock
     CScript scriptSig;
     uint32_t nSequence;
     CScriptWitness scriptWitness; //!< Only serialized through CTransaction
@@ -150,6 +153,7 @@ class CTxOut
 {
 public:
     CAmount nValue;
+    // lock이고
     CScript scriptPubKey;
 
     CTxOut()
@@ -212,6 +216,7 @@ static constexpr TransactionSerParams TX_NO_WITNESS{.allow_witness = false};
  *   - CScriptWitness scriptWitness; (deserialized into CTxIn)
  * - uint32_t nLockTime
  */
+// s를 입력받아서 unserialize하고 그 값을 tx에 저장한다
 template<typename Stream, typename TxType>
 void UnserializeTransaction(TxType& tx, Stream& s, const TransactionSerParams& params)
 {
@@ -226,6 +231,7 @@ void UnserializeTransaction(TxType& tx, Stream& s, const TransactionSerParams& p
     if (tx.vin.size() == 0 && fAllowWitness) {
         /* We read a dummy or an empty vin. */
         s >> flags;
+        // flag가 0이면 coinbase transaction인가?
         if (flags != 0) {
             s >> tx.vin;
             s >> tx.vout;
@@ -251,7 +257,7 @@ void UnserializeTransaction(TxType& tx, Stream& s, const TransactionSerParams& p
     }
     s >> tx.nLockTime;
 }
-
+// tx를 s에 저장한다.
 template<typename Stream, typename TxType>
 void SerializeTransaction(const TxType& tx, Stream& s, const TransactionSerParams& params)
 {
@@ -263,6 +269,7 @@ void SerializeTransaction(const TxType& tx, Stream& s, const TransactionSerParam
     if (fAllowWitness) {
         /* Check whether witnesses need to be serialized. */
         if (tx.HasWitness()) {
+            // 아마 segwit을 쓰려고 flag를 따로 설정하는 듯
             flags |= 1;
         }
     }
@@ -285,6 +292,7 @@ void SerializeTransaction(const TxType& tx, Stream& s, const TransactionSerParam
 template<typename TxType>
 inline CAmount CalculateOutputValue(const TxType& tx)
 {
+    // 해당 tx의 output value를 다 합친다.
     return std::accumulate(tx.vout.cbegin(), tx.vout.cend(), CAmount{0}, [](CAmount sum, const auto& txout) { return sum + txout.nValue; });
 }
 
@@ -386,6 +394,7 @@ struct CMutableTransaction
 
     template <typename Stream>
     inline void Serialize(Stream& s) const {
+        // s에 this 값을 저장한다.
         SerializeTransaction(*this, s, s.template GetParams<TransactionSerParams>());
     }
 
@@ -411,6 +420,7 @@ struct CMutableTransaction
 
     bool HasWitness() const
     {
+        // 하나라도 witness가 있으면 true로 반환한다.
         for (size_t i = 0; i < vin.size(); i++) {
             if (!vin[i].scriptWitness.IsNull()) {
                 return true;

@@ -85,7 +85,7 @@ static RPCHelpMan signmessagewithprivkey()
         {
             std::string strPrivkey = request.params[0].get_str();
             std::string strMessage = request.params[1].get_str();
-
+            // key를 decode한다.
             CKey key = DecodeSecret(strPrivkey);
             if (!key.IsValid()) {
                 throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid private key");

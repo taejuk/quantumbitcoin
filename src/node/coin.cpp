@@ -15,6 +15,7 @@ void FindCoins(const NodeContext& node, std::map<COutPoint, Coin>& coins)
     assert(node.chainman);
     LOCK2(cs_main, node.mempool->cs);
     CCoinsViewCache& chain_view = node.chainman->ActiveChainstate().CoinsTip();
+    // view를 통해서 현재 utxo를 알 수 있다.
     CCoinsViewMemPool mempool_view(&chain_view, *node.mempool);
     for (auto& [outpoint, coin] : coins) {
         if (auto c{mempool_view.GetCoin(outpoint)}) {

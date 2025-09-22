@@ -17,8 +17,9 @@ interfaces::BlockInfo MakeBlockInfo(const CBlockIndex* index, const CBlock* data
     if (index) {
         info.prev_hash = index->pprev ? index->pprev->phashBlock : nullptr;
         info.height = index->nHeight;
+        // 가장 마지막 block을 가지고 오면 될거니깐 
         info.chain_time_max = index->GetBlockTimeMax();
-        LOCK(::cs_main);
+        LOCK(::cs_main); // 언제 unlock되는가?
         info.file_number = index->nFile;
         info.data_pos = index->nDataPos;
     }
